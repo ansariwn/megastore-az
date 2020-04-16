@@ -6,9 +6,9 @@ variables:
 - group: megastore
 
 pool:
-  name: local
+  name: default
   demands:
-  - agent.name -equals windows-10
+  - agent.name -equals oneclient
 
 stages:
 - stage: provision
