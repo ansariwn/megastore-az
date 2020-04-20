@@ -27,7 +27,7 @@ stages:
     - publish: $(System.DefaultWorkingDirectory)/iac
       artifact: $(iac_artefact_name)
       displayName: 'publish iac artefact'
-      enabled: false
+      enabled: true
 
     - task: DownloadPipelineArtifact@2
       inputs:
@@ -35,12 +35,12 @@ stages:
         artifact: $(iac_artefact_name)
         path: $(Pipeline.Workspace)/iac
       displayName: 'download iac artefact'
-      enabled: false  
+      enabled: true  
 
     - powershell: New-Item -Path . -Name "backend.tf" -ItemType "file" -Value "terraform {`n  backend `"azurerm`" {}`n}"
       workingDirectory: $(Pipeline.Workspace)/iac
       displayName: 'create file with azurerm backend configuration'
-      enabled: false
+      enabled: true
 
     - script: terraform init
         --backend-config="storage_account_name=$(backend_storage_account_name)"
@@ -49,7 +49,7 @@ stages:
         --backend-config="key=$(project_name)-backend"
       displayName: 'terraform init'
       workingDirectory: $(Pipeline.Workspace)/iac
-      enabled: false
+      enabled: true
 
     - script: |
         terraform plan
