@@ -27,17 +27,20 @@ stages:
     - publish: $(System.DefaultWorkingDirectory)/iac
       artifact: $(iac_artefact_name)
       displayName: 'publish iac artefact'
+      enabled: false
 
     - task: DownloadPipelineArtifact@2
       inputs:
         source: current
         artifact: $(iac_artefact_name)
         path: $(Pipeline.Workspace)/iac
-      displayName: 'download iac artefact'  
+      displayName: 'download iac artefact'
+      enabled: false  
 
     - powershell: New-Item -Path . -Name "backend.tf" -ItemType "file" -Value "terraform {`n  backend `"azurerm`" {}`n}"
       workingDirectory: $(Pipeline.Workspace)/iac
       displayName: 'create file with azurerm backend configuration'
+      enabled: false
 
     - script: terraform init
         --backend-config="storage_account_name=$(backend_storage_account_name)"
@@ -46,12 +49,14 @@ stages:
         --backend-config="key=$(project_name)-backend"
       displayName: 'terraform init'
       workingDirectory: $(Pipeline.Workspace)/iac
+      enabled: false
 
     - script: |
         terraform plan
         terraform apply --auto-approve
       displayName: 'terraform plan and apply'
       workingDirectory: $(Pipeline.Workspace)/iac
+      enabled: false
       env:
         ARM_CLIENT_ID: $(azure_client_id)
         ARM_CLIENT_SECRET: $(azure_client_secret)
@@ -63,3 +68,8 @@ stages:
         TF_VAR_asql_administrator_login_name: $(asql_administrator_login_name)
         TF_VAR_asql_administrator_login_password: $(asql_administrator_login_password)
         TF_VAR_asql_local_client_ip_address: $(asql_local_client_ip_address)
+
+    - script: terraform destroy
+      displayName: 'terraform destroy'
+      workingDirectory: $(Pipeline.Workspace)/iac
+      enabled: true
