@@ -69,7 +69,7 @@ stages:
         TF_VAR_asql_administrator_login_password: $(asql_administrator_login_password)
         TF_VAR_asql_local_client_ip_address: $(asql_local_client_ip_address)
 
-    - script: terraform destroy
+    - script: terraform destroy --auto-approve
       displayName: 'terraform destroy'
       workingDirectory: $(Pipeline.Workspace)/iac
       enabled: true
